@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧸 Happy Teddy Day, Karlee!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #ffe0ec 0%, #ffd6e7 40%, #ffe8cc 100%);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px; overflow-x: hidden;
+  }
+
+  /* SPLASH */
+  .splash {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #ffe0ec 0%, #ffd6e7 40%, #ffe8cc 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 1000; text-align: center; padding: 32px;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .splash.hide { opacity: 0; transform: scale(1.04); pointer-events: none; }
+  .splash-bear { font-size: 5rem; animation: bearBounce 1.4s ease-in-out infinite; margin-bottom: 14px; }
+  @keyframes bearBounce {
+    0%,100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-18px) rotate(5deg); }
+  }
+  .splash h1 { font-size: 2.2rem; font-weight: 900; color: #d63f7a; margin-bottom: 10px; }
+  .splash-msg { font-size: 1rem; color: #c0607a; font-weight: 600; max-width: 380px; line-height: 1.75; margin-bottom: 22px; }
+  .splash-msg em { color: #d63f7a; font-style: normal; font-weight: 900; }
+  .splash-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 380px; margin-bottom: 26px; }
+  .chip {
+    background: white; color: #d63f7a;
+    border: 2px solid #ffc8de;
+    padding: 5px 13px; border-radius: 20px;
+    font-size: 0.8rem; font-weight: 700;
+  }
+  .splash-btn {
+    background: linear-gradient(135deg, #ff8fab, #ff6b9d);
+    color: white; border: none;
+    padding: 15px 48px; border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem; font-weight: 800; cursor: pointer;
+    box-shadow: 0 8px 26px rgba(255,107,157,0.45);
+    transition: all 0.2s ease;
+  }
+  .splash-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(255,107,157,0.55); }
+  .splash-note { font-size: 0.78rem; color: #e0b0c4; margin-top: 14px; font-style: italic; }
+
+  /* FLOATERS */
+  .floating-hearts { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
+  .heart-float { position: absolute; font-size: 1.5rem; animation: floatUp linear infinite; opacity: 0; }
+  @keyframes floatUp {
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0.7; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* CONTAINER */
+  .container {
+    position: relative; z-index: 1;
+    max-width: 820px; width: 100%;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(10px);
+    border-radius: 32px;
+    padding: 34px 30px;
+    box-shadow: 0 20px 60px rgba(255,130,170,0.25), 0 4px 20px rgba(0,0,0,0.08);
+    border: 2px solid rgba(255,182,213,0.5);
+  }
+  .game-header { text-align: center; margin-bottom: 18px; }
+  .game-header h1 { font-size: 1.85rem; font-weight: 900; color: #d63f7a; margin-bottom: 3px; }
+  .game-header .subtitle { color: #e87aa8; font-size: 0.93rem; font-weight: 600; }
+
+  /* progress pips */
+  .score-track { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .score-pip {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: #ffe0ee; border: 2px solid #ffc8de;
+    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .score-pip.done { background: linear-gradient(135deg, #ff8fab, #ff6b9d); border-color: transparent; transform: scale(1.25); }
+
+  /* GAME AREA */
+  .game-area { display: flex; gap: 28px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+
+  /* TEDDY */
+  .teddy-area { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 210px; }
+  .teddy-canvas { width: 210px; height: 250px; }
+  .parts-label {
+    font-size: 0.78rem; color: #e87aa8; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    background: #fff0f6; padding: 4px 14px;
+    border-radius: 20px; border: 1.5px solid #ffc8de;
+  }
+
+  /* WORD SECTION */
+  .word-section { flex: 1; min-width: 260px; display: flex; flex-direction: column; align-items: center; gap: 13px; }
+  .category-badge {
+    background: linear-gradient(135deg, #ff8fab, #ff6b9d);
+    color: white; padding: 5px 18px; border-radius: 20px;
+    font-size: 0.78rem; font-weight: 700;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    box-shadow: 0 3px 12px rgba(255,107,157,0.35);
+  }
+  .hint-text { font-size: 0.88rem; color: #999; font-weight: 600; text-align: center; min-height: 22px; font-style: italic; max-width: 280px; line-height: 1.4; }
+  .word-display { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; padding: 6px 8px; }
+  .letter-box {
+    width: 34px; height: 42px;
+    border-bottom: 3px solid #ffaacf;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; font-weight: 800; color: #d63f7a;
+  }
+  .letter-box.revealed { animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+  .letter-box span { display: block; }
+  @keyframes popIn {
+    0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  .space-gap { width: 18px; }
+
+  /* KEYBOARD */
+  .keyboard { display: flex; flex-direction: column; gap: 5px; align-items: center; }
+  .key-row { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+  .key {
+    width: 36px; height: 36px; border-radius: 10px;
+    border: 2px solid #ffc8de; background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem; font-weight: 800; color: #d63f7a;
+    cursor: pointer; transition: all 0.15s ease;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(255,150,190,0.2);
+  }
+  .key:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ff8fab, #ff6b9d);
+    color: white; border-color: transparent;
+    transform: translateY(-2px); box-shadow: 0 5px 14px rgba(255,107,157,0.4);
+  }
+  .key:disabled { cursor: not-allowed; border-color: #eee; color: #ccc; background: #fafafa; transform: none; box-shadow: none; }
+  .key.wrong-key { background: #ffe4e4; color: #e08080; border-color: #ffcece; }
+  .key.right-key { background: linear-gradient(135deg, #a8edea, #fed6e3); color: #3a8888; border-color: transparent; }
+
+  /* STATUS */
+  .status-bar { display: flex; gap: 12px; justify-content: center; font-size: 0.85rem; font-weight: 700; }
+  .lives-display { background: #fff0f6; border: 2px solid #ffc8de; border-radius: 20px; padding: 4px 14px; color: #d63f7a; }
+  .message-box {
+    text-align: center; font-size: 1.1rem; font-weight: 800;
+    min-height: 36px; padding: 8px 18px;
+    border-radius: 16px; transition: all 0.4s ease;
+    max-width: 300px; line-height: 1.45;
+  }
+  .message-box.win { background: #e8fff0; color: #2e9e5a; border: 2px solid #a8e6c0; }
+  .message-box.lose { background: #fff0f0; color: #c0392b; border: 2px solid #f5aca9; }
+  .message-box.hidden { opacity: 0; }
+
+  .play-again-btn {
+    background: linear-gradient(135deg, #ff8fab, #ff6b9d);
+    color: white; border: none;
+    padding: 11px 34px; border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem; font-weight: 800; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255,107,157,0.4);
+    transition: all 0.2s ease; margin-top: 4px; display: none;
+  }
+  .play-again-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(255,107,157,0.5); }
+  .play-again-btn.visible { display: block; }
+
+  /* CONFETTI */
+  .confetti-piece {
+    position: fixed; width: 10px; height: 10px; border-radius: 2px;
+    animation: confettiFall 3s linear forwards;
+    z-index: 999; pointer-events: none;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  @media (max-width: 500px) {
+    .container { padding: 20px 12px; }
+    .game-header h1 { font-size: 1.4rem; }
+    .key { width: 30px; height: 30px; font-size: 0.76rem; }
+    .letter-box { width: 28px; font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splashScreen">
+  <div class="splash-bear">🧸</div>
+  <h1>Happy Teddy Day, Karlee! 💕</h1>
+  <p class="splash-msg">
+    A little game made just for you, <em>Stinky Poop</em> 😘<br>
+    Guess the words — each letter builds your teddy bear!<br>
+    All the clues are about <em>you</em> and the things you love 🐘
+  </p>
+  <div class="splash-chips">
+    <div class="chip">🐘 Elephants</div>
+    <div class="chip">🗽 New York</div>
+    <div class="chip">🎄 Christmas</div>
+    <div class="chip">🇮🇳 India</div>
+    <div class="chip">🇹🇭 Thailand</div>
+    <div class="chip">🌆 Chicago</div>
+    <div class="chip">💖 Us</div>
+  </div>
+  <button class="splash-btn" onclick="hideSplash()">Let's Play! 🧸</button>
+  <p class="splash-note">Made with love, just for you 💌</p>
+</div>
+
+<!-- FLOATING EMOJIS BG -->
+<div class="floating-hearts" id="floatingHearts"></div>
+
+<!-- MAIN GAME -->
+<div class="container">
+  <div class="game-header">
+    <h1>🧸 Build Karlee's Teddy!</h1>
+    <div class="subtitle">Guess the word — each correct letter builds your bear 💕</div>
+  </div>
+
+  <div class="score-track" id="scorePips"></div>
+
+  <div class="game-area">
+    <!-- TEDDY SVG -->
+    <div class="teddy-area">
+      <svg class="teddy-canvas" viewBox="0 0 220 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g id="part-body" opacity="0" style="transition:opacity 0.5s ease">
+          <ellipse cx="110" cy="175" rx="55" ry="62" fill="#D4956A"/>
+          <ellipse cx="110" cy="175" rx="35" ry="42" fill="#E8B88A" opacity="0.6"/>
+          <circle cx="110" cy="196" r="4" fill="#C07840"/>
+        </g>
+        <g id="part-head" opacity="0" style="transition:opacity 0.5s ease">
+          <circle cx="110" cy="100" r="52" fill="#D4956A"/>
+          <ellipse cx="110" cy="115" rx="28" ry="22" fill="#E8B88A" opacity="0.8"/>
+        </g>
+        <g id="part-left-ear" opacity="0" style="transition:opacity 0.5s ease">
+          <circle cx="68" cy="57" r="20" fill="#D4956A"/>
+          <circle cx="68" cy="57" r="12" fill="#E8A0A0"/>
+        </g>
+        <g id="part-right-ear" opacity="0" style="transition:opacity 0.5s ease">
+          <circle cx="152" cy="57" r="20" fill="#D4956A"/>
+          <circle cx="152" cy="57" r="12" fill="#E8A0A0"/>
+        </g>
+        <g id="part-left-arm" opacity="0" style="transition:opacity 0.5s ease">
+          <ellipse cx="54" cy="165" rx="16" ry="36" fill="#D4956A" transform="rotate(-25 54 165)"/>
+          <ellipse cx="42" cy="191" rx="14" ry="10" fill="#D4956A"/>
+        </g>
+        <g id="part-right-arm" opacity="0" style="transition:opacity 0.5s ease">
+          <ellipse cx="166" cy="165" rx="16" ry="36" fill="#D4956A" transform="rotate(25 166 165)"/>
+          <ellipse cx="178" cy="191" rx="14" ry="10" fill="#D4956A"/>
+        </g>
+        <g id="part-left-leg" opacity="0" style="transition:opacity 0.5s ease">
+          <ellipse cx="84" cy="232" rx="22" ry="16" fill="#D4956A"/>
+          <ellipse cx="78" cy="225" rx="15" ry="28" fill="#D4956A"/>
+        </g>
+        <g id="part-right-leg" opacity="0" style="transition:opacity 0.5s ease">
+          <ellipse cx="136" cy="232" rx="22" ry="16" fill="#D4956A"/>
+          <ellipse cx="142" cy="225" rx="15" ry="28" fill="#D4956A"/>
+        </g>
+        <g id="part-left-eye" opacity="0" style="transition:opacity 0.5s ease">
+          <circle cx="94" cy="97" r="8" fill="#3D2010"/>
+          <circle cx="97" cy="94" r="2.5" fill="white"/>
+        </g>
+        <g id="part-right-eye" opacity="0" style="transition:opacity 0.5s ease">
+          <circle cx="126" cy="97" r="8" fill="#3D2010"/>
+          <circle cx="129" cy="94" r="2.5" fill="white"/>
+        </g>
+        <g id="part-nose" opacity="0" style="transition:opacity 0.5s ease">
+          <ellipse cx="110" cy="112" rx="10" ry="7" fill="#3D2010"/>
+          <ellipse cx="110" cy="111" rx="5" ry="3" fill="#6B3A20" opacity="0.5"/>
+        </g>
+        <g id="part-mouth" opacity="0" style="transition:opacity 0.5s ease">
+          <path d="M98 120 Q110 133 122 120" stroke="#3D2010" stroke-width="3" stroke-linecap="round" fill="none"/>
+        </g>
+        <g id="part-heart" opacity="0" style="transition:opacity 0.5s ease">
+          <path d="M110 180 C110 180 96 168 96 160 C96 154 101 150 106 153 C107.5 153.8 109 155 110 156.5 C111 155 112.5 153.8 114 153 C119 150 124 154 124 160 C124 168 110 180 110 180Z" fill="#FF6B9D"/>
+        </g>
+        <g id="part-bow" opacity="0" style="transition:opacity 0.5s ease">
+          <path d="M96 130 L82 122 L82 138 Z" fill="#FF6B9D"/>
+          <path d="M124 130 L138 122 L138 138 Z" fill="#FF6B9D"/>
+          <circle cx="110" cy="130" r="7" fill="#FF8FAB"/>
+        </g>
+      </svg>
+      <div class="parts-label" id="partsLabel">0 / 14 parts</div>
+    </div>
+
+    <!-- WORD / CONTROLS -->
+    <div class="word-section">
+      <div id="categoryBadge" class="category-badge">✨ Loading</div>
+      <div class="hint-text" id="hintText"></div>
+      <div class="word-display" id="wordDisplay"></div>
+      <div class="status-bar">
+        <div class="lives-display" id="livesDisplay">❤️❤️❤️❤️❤️❤️</div>
+      </div>
+      <div class="message-box hidden" id="messageBox"></div>
+      <div class="keyboard" id="keyboard"></div>
+      <button class="play-again-btn" id="playAgainBtn" onclick="startNewGame()">🧸 Next Word!</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORDS = [
+  // Her name
+  { word: "KARLEE",      category: "That's You! 🌟",       hint: "The most important word in my whole world 💕" },
+  // Her fav animal
+  { word: "ELEPHANT",    category: "Fav Animal 🐘",         hint: "Her favourite animal — wise, gentle & impossible not to love" },
+  { word: "TRUNK",       category: "Elephant Fun Fact 🐘",  hint: "An elephant uses this to drink, smell AND hug 🤗" },
+  // The iconic nickname
+  { word: "STINKYPOOP",  category: "Nickname 😂💕",         hint: "What a certain boyfriend calls her... lovingly 🫢" },
+  // Bucket list
+  { word: "NEWYORK",     category: "Dream Trip 🗽",         hint: "Bright lights, big city — her #1 bucket list destination" },
+  { word: "CHRISTMAS",   category: "Bucket List 🎄",        hint: "The holiday she wants to experience in New York City ✨" },
+  { word: "ROCKEFELLER", category: "NYC Landmark 🎄",       hint: "Famous NYC plaza with the big Christmas tree she dreams of seeing" },
+  // Travel wishlist
+  { word: "CHICAGO",     category: "Travel Wishlist 🌆",    hint: "The Windy City — deep dish pizza & a skyline that slaps" },
+  { word: "INDIA",       category: "Travel Wishlist 🇮🇳",   hint: "Taj Mahal, colours, spices — a trip she absolutely has to take" },
+  { word: "THAILAND",    category: "Travel Wishlist 🇹🇭",   hint: "Temples, beaches & the world's best street food 🛺" },
+  { word: "WANDERLUST",  category: "Her Spirit 🌍",         hint: "The word for that unstoppable urge to see the whole world" },
+  { word: "ADVENTURE",   category: "Her Energy 🗺️",        hint: "What every single one of her travel plans has in common" },
+  // Sweet & romantic
+  { word: "FOREVER",     category: "Promise ♾️",            hint: "How long I'll be by your side, no matter what 🤍" },
+  { word: "SOULMATE",    category: "Us 💞",                 hint: "What I knew you were the moment I met you, Karlee" },
+  { word: "CHERISH",     category: "How I Feel 💖",         hint: "The exact word for how I feel about you every single day" },
+];
+
+const TEDDY_PARTS = [
+  'part-body','part-head','part-left-ear','part-right-ear',
+  'part-left-arm','part-right-arm','part-left-leg','part-right-leg',
+  'part-left-eye','part-right-eye','part-nose','part-mouth',
+  'part-heart','part-bow'
+];
+
+const WIN_MSGS = [
+  "🎉 Yasss! You got it! Happy Teddy Day, Karlee! 🧸💕",
+  "🐘 Elephant brain activate! She's unstoppable! 🌟",
+  "🎊 Nailed it! Your teddy is getting cuter! 🧸",
+  "💕 Of course she knew that one! 🥰",
+  "✨ Smart AND adorable — that's our Karlee! 💖",
+];
+const LOSE_FNS = [
+  w => `💔 Nooo! It was "${w}" — try the next one! 🧸`,
+  w => `😅 It was "${w}"! Even Stinky Poop has off days 😂💕`,
+  w => `🙈 So close! "${w}" was the answer — don't give up! 💖`,
+];
+
+const KB_ROWS = ['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+let currentWord='', guessedLetters=new Set(), wrongGuesses=0, gameOver=false, revealedParts=0;
+let usedWordIndices=[];
+
+function hideSplash() {
+  document.getElementById('splashScreen').classList.add('hide');
+  setTimeout(() => document.getElementById('splashScreen').remove(), 800);
+}
+
+function createFloatingHearts() {
+  const container = document.getElementById('floatingHearts');
+  const emojis = ['🌸','💕','💖','🐘','✨','💗','🌷','🗽','🎄','🇮🇳','🇹🇭','🌆'];
+  for (let i = 0; i < 20; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart-float';
+    h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    h.style.left = Math.random() * 100 + 'vw';
+    h.style.animationDuration = (9 + Math.random() * 12) + 's';
+    h.style.animationDelay = (Math.random() * 18) + 's';
+    h.style.fontSize = (0.9 + Math.random() * 1.4) + 'rem';
+    container.appendChild(h);
+  }
+}
+
+function buildScorePips() {
+  const el = document.getElementById('scorePips');
+  el.innerHTML = '';
+  WORDS.forEach((_, i) => {
+    const pip = document.createElement('div');
+    pip.className = 'score-pip' + (usedWordIndices.includes(i) ? ' done' : '');
+    pip.id = 'pip-' + i;
+    el.appendChild(pip);
+  });
+}
+
+function buildKeyboard() {
+  const kb = document.getElementById('keyboard');
+  kb.innerHTML = '';
+  KB_ROWS.forEach(row => {
+    const div = document.createElement('div');
+    div.className = 'key-row';
+    [...row].forEach(letter => {
+      const btn = document.createElement('button');
+      btn.className = 'key'; btn.textContent = letter; btn.id = 'key-' + letter;
+      btn.onclick = () => handleGuess(letter);
+      div.appendChild(btn);
+    });
+    kb.appendChild(div);
+  });
+}
+
+function startNewGame() {
+  guessedLetters = new Set(); wrongGuesses = 0; gameOver = false; revealedParts = 0;
+  TEDDY_PARTS.forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('opacity','0'); });
+
+  let available = WORDS.map((_,i) => i).filter(i => !usedWordIndices.includes(i));
+  if (available.length === 0) { usedWordIndices = []; available = WORDS.map((_,i) => i); }
+  const idx = available[Math.floor(Math.random() * available.length)];
+  usedWordIndices.push(idx);
+  const wordObj = WORDS[idx];
+  currentWord = wordObj.word;
+
+  document.getElementById('categoryBadge').textContent = wordObj.category;
+  document.getElementById('hintText').textContent = wordObj.hint;
+  renderWordDisplay(); renderLives(); updatePartsLabel();
+  buildScorePips(); buildKeyboard();
+  const mb = document.getElementById('messageBox');
+  mb.textContent = ''; mb.className = 'message-box hidden';
+  document.getElementById('playAgainBtn').className = 'play-again-btn';
+}
+
+function renderWordDisplay() {
+  const display = document.getElementById('wordDisplay');
+  display.innerHTML = '';
+  [...currentWord].forEach((ch, i) => {
+    if (ch === ' ') {
+      const gap = document.createElement('div'); gap.className = 'space-gap'; display.appendChild(gap);
+    } else {
+      const box = document.createElement('div');
+      box.className = 'letter-box'; box.id = 'letterbox-' + i;
+      const span = document.createElement('span');
+      span.textContent = guessedLetters.has(ch) ? ch : '';
+      if (guessedLetters.has(ch)) box.classList.add('revealed');
+      box.appendChild(span); display.appendChild(box);
+    }
+  });
+}
+
+function renderLives() {
+  const rem = 6 - wrongGuesses;
+  document.getElementById('livesDisplay').textContent = '❤️'.repeat(Math.max(0,rem)) + '🖤'.repeat(wrongGuesses);
+}
+
+function updatePartsLabel() {
+  document.getElementById('partsLabel').textContent = revealedParts + ' / 14 parts';
+}
+
+function revealNextParts(count) {
+  for (let i = 0; i < count && revealedParts < TEDDY_PARTS.length; i++) {
+    const el = document.getElementById(TEDDY_PARTS[revealedParts]);
+    if (el) el.setAttribute('opacity','1');
+    revealedParts++;
+  }
+  updatePartsLabel();
+}
+
+function handleGuess(letter) {
+  if (gameOver || guessedLetters.has(letter)) return;
+  guessedLetters.add(letter);
+  const btn = document.getElementById('key-' + letter);
+
+  if (currentWord.includes(letter)) {
+    if (btn) { btn.className = 'key right-key'; btn.disabled = true; }
+    const uniqueCount = [...new Set([...currentWord].filter(c => c !== ' '))].length;
+    revealNextParts(Math.max(1, Math.round(14 / uniqueCount)));
+    [...currentWord].forEach((ch, i) => {
+      if (ch === letter) {
+        const box = document.getElementById('letterbox-' + i);
+        if (box) { box.querySelector('span').textContent = ch; box.classList.add('revealed'); }
+      }
+    });
+    const allDone = [...currentWord].every(c => c === ' ' || guessedLetters.has(c));
+    if (allDone) { revealNextParts(14 - revealedParts); endGame(true); }
+  } else {
+    if (btn) { btn.className = 'key wrong-key'; btn.disabled = true; }
+    wrongGuesses++;
+    renderLives();
+    if (wrongGuesses >= 6) endGame(false);
+  }
+}
+
+function endGame(won) {
+  gameOver = true;
+  const mb = document.getElementById('messageBox');
+  if (won) {
+    mb.textContent = WIN_MSGS[Math.floor(Math.random() * WIN_MSGS.length)];
+    mb.className = 'message-box win';
+    launchConfetti();
+  } else {
+    const fn = LOSE_FNS[Math.floor(Math.random() * LOSE_FNS.length)];
+    mb.textContent = fn(currentWord);
+    mb.className = 'message-box lose';
+  }
+  [...currentWord].forEach((ch, i) => {
+    if (ch !== ' ') { const b = document.getElementById('letterbox-' + i); if (b) b.querySelector('span').textContent = ch; }
+  });
+  document.getElementById('playAgainBtn').className = 'play-again-btn visible';
+  document.querySelectorAll('.key').forEach(k => k.disabled = true);
+  const pip = document.getElementById('pip-' + (usedWordIndices.length - 1));
+  if (pip) pip.classList.add('done');
+}
+
+function launchConfetti() {
+  const colors = ['#ff6b9d','#ffaacf','#ffd700','#a8edea','#fed6e3','#ff8c69','#c8f090','#ffb347'];
+  for (let i = 0; i < 90; i++) {
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.className = 'confetti-piece';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.top = '-20px';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      p.style.width = (7 + Math.random() * 9) + 'px';
+      p.style.height = (7 + Math.random() * 9) + 'px';
+      p.style.animationDuration = (2 + Math.random() * 2) + 's';
+      p.style.animationDelay = Math.random() * 0.8 + 's';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 4000);
+    }, i * 35);
+  }
+}
+
+document.addEventListener('keydown', e => {
+  const l = e.key.toUpperCase();
+  if (/^[A-Z]$/.test(l) && !gameOver) handleGuess(l);
+});
+
+createFloatingHearts();
+buildScorePips();
+startNewGame();
+</script>
+</body>
+</html>
